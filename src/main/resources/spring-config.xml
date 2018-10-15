@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:c="http://www.springframework.org/schema/c"
+       xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo" xmlns:config="https://crnlmchina.github.io/config"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xsi:schemaLocation="http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+		http://www.springframework.org/schema/security
+		http://www.springframework.org/schema/security/spring-security-3.2.xsd
+		http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+		http://www.springframework.org/schema/data/jpa
+		http://www.springframework.org/schema/data/jpa/spring-jpa-1.3.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-4.2.xsd
+		http://www.springframework.org/schema/cache
+		http://www.springframework.org/schema/cache/spring-cache-4.2.xsd
+		http://code.alibabatech.com/schema/dubbo
+		http://code.alibabatech.com/schema/dubbo/dubbo.xsd
+		https://crnlmchina.github.io/config
+		https://crnlmchina.github.io/config/config.xsd
+		http://www.springframework.org/schema/rabbit
+    	http://www.springframework.org/schema/rabbit/spring-rabbit-1.2.xsd">
+
+    <!-- Scans for application @Components to deploy -->
+    <context:component-scan base-package="com.wkb.robot"/>
+    <!--<bean id="mqProducerService" class="com.wkb.robot.rabbitmq.service.impl.MQTaskServiceImpl" />-->
+
+    <!-- 加载动态配置文件 -->
+    <context:property-placeholder
+            ignore-resource-not-found="true" location="classpath*:/common/*.properties"/>
+
+    <!-- 配置中心 -->
+    <config:profile id="baseConfig" connect-str="${zk.config.address}"
+                    root-node="/wkb/robot" version="1.0.0"/>
+    <!-- redis配置中心 -->
+    <config:group id="redisConfigProp" node="common.redis"
+                  config-profile-ref="baseConfig"/>
+    <!-- mysql配置中心 -->
+    <config:group id="mysqlConfigProp" node="common.mysql"
+                  config-profile-ref="baseConfig"/>
+
+    <!-- dubbo配置中心 -->
+    <config:group id="dubboConfigProp" node="common.dubbo"
+                  config-profile-ref="baseConfig"/>
+
+    <!-- rabbit配置中心 -->
+    <config:group id="rabbitConfigProp" node="common.rabbit"
+                  config-profile-ref="baseConfig"/>
+
+    <bean id="masterdataSource" class="com.alibaba.druid.pool.DruidDataSource"
+          destroy-method="close">
+        <!-- 数据库基本信息配置 -->
+        <property name="url" value="#{mysqlConfigProp['master.jdbc.url']}"/>
+        <property name="username"
+                  value="#{mysqlConfigProp['master.jdbc.username']}"/>
+        <property name="password"
+                  value="#{mysqlConfigProp['master.jdbc.password']}"/>
+        <property name="driverClassName"
+                  value="#{mysqlConfigProp['master.jdbc.driverClassName']}"/>
+        <!-- 最大并发连接数 -->
+        <property name="maxActive"
+                  value="#{mysqlConfigProp['master.jdbc.maxActive']}"/>
+        <!-- 初始化连接数量 -->
+        <property name="initialSize"
+                  value="#{mysqlConfigProp['master.jdbc.initialSize']}"/>
+        <!-- 配置获取连接等待超时的时间 -->
+        <property name="maxWait"
+                  value="#{mysqlConfigProp['master.jdbc.maxWait']}"/>
+        <!-- 最小空闲连接数 -->
+        <property name="minIdle"
+                  value="#{mysqlConfigProp['master.jdbc.minIdle']}"/>
+        <!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+        <property name="timeBetweenEvictionRunsMillis"
+                  value="#{mysqlConfigProp['master.jdbc.timeBetweenEvictionRunsMillis']}"/>
+        <!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+        <property name="minEvictableIdleTimeMillis"
+                  value="#{mysqlConfigProp['master.jdbc.minEvictableIdleTimeMillis']}"/>
+        <property name="validationQuery"
+                  value="#{mysqlConfigProp['master.jdbc.validationQuery']}"/>
+        <property name="testWhileIdle"
+                  value="#{mysqlConfigProp['master.jdbc.testWhileIdle']}"/>
+        <property name="testOnBorrow"
+                  value="#{mysqlConfigProp['master.jdbc.testOnBorrow']}"/>
+        <property name="testOnReturn"
+                  value="#{mysqlConfigProp['master.jdbc.testOnReturn']}"/>
+        <property name="maxOpenPreparedStatements"
+                  value="#{mysqlConfigProp['master.jdbc.maxOpenPreparedStatements']}"/>
+        <!-- 打开 removeAbandoned 功能 -->
+        <property name="removeAbandoned"
+                  value="#{mysqlConfigProp['master.jdbc.removeAbandoned']}"/>
+        <!-- 1800 秒，也就是 30 分钟 -->
+        <property name="removeAbandonedTimeout"
+                  value="#{mysqlConfigProp['master.jdbc.removeAbandonedTimeout']}"/>
+        <!-- 关闭 abanded 连接时输出错误日志 -->
+        <property name="logAbandoned"
+                  value="#{mysqlConfigProp['master.jdbc.logAbandoned']}"/>
+    </bean>
+
+    <!-- 配置dbcp数据源 -->
+    <bean id="dataSource" class="com.wkb.core.data.DynamicDataSource">
+        <property name="targetDataSources">
+            <map key-type="java.lang.String">
+                <!-- write -->
+                <entry key="master" value-ref="masterdataSource"/>
+            </map>
+        </property>
+        <property name="defaultTargetDataSource" ref="masterdataSource"/>
+    </bean>
+
+
+    <!-- 动态数据源切面 -->
+    <bean id="datasourceAspect" class="com.wkb.core.data.DataSourceAspect"/>
+
+    <aop:config>
+        <aop:aspect id="datasourceAop" ref="datasourceAspect">
+            <aop:pointcut id="target" expression="execution(* com.wkb..service..*(..))"/>
+            <aop:before method="before" pointcut-ref="target"/>
+            <aop:after method="after" pointcut-ref="target"/>
+        </aop:aspect>
+    </aop:config>
+
+    <!-- 使用JDBC事物 -->
+    <bean id="transactionManager"
+          class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- AOP配置事物 -->
+    <tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="insert*" propagation="REQUIRED"
+                       rollback-for="Exception"/>
+            <tx:method name="add*" propagation="NESTED" rollback-for="Exception"/>
+            <tx:method name="update*" propagation="REQUIRED"
+                       rollback-for="Exception"/>
+            <tx:method name="modify*" propagation="NESTED"
+                       rollback-for="Exception"/>
+            <tx:method name="edit*" propagation="NESTED" rollback-for="Exception"/>
+            <tx:method name="del*" propagation="REQUIRED" rollback-for="Exception"/>
+            <tx:method name="save*" propagation="NESTED" rollback-for="Exception"/>
+            <tx:method name="send*" propagation="NESTED" rollback-for="Exception"/>
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="find*" read-only="true"/>
+            <tx:method name="query*" read-only="true"/>
+            <tx:method name="search*" read-only="true"/>
+            <tx:method name="select*" read-only="true"/>
+            <tx:method name="count*" read-only="true"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <!-- 配置AOP切面 -->
+    <aop:config>
+        <aop:pointcut id="transactionPointcut" expression="execution(* com.wkb..service.*.*(..))"/>
+        <aop:advisor pointcut-ref="transactionPointcut"
+                     advice-ref="transactionAdvice"/>
+    </aop:config>
+
+    <!-- 使用annotation注解方式配置事务 -->
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="mapperLocations" value="classpath:mapper/*Mapper.xml"></property>
+    </bean>
+
+    <!-- 配置SQLSession模板 -->
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate"
+          scope="prototype">
+        <constructor-arg index="0" ref="sqlSessionFactory"/>
+    </bean>
+
+    <!-- Mapper接口所在包名，Spring会自动查找其下的Mapper -->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="basePackage" value="com.wkb"/>
+        <property name="markerInterface" value="com.wkb.robot.mapper.BaseMapper"/>
+        <property name="sqlSessionFactoryBeanName" value="sqlSessionFactory"/>
+    </bean>
+
+
+    <!-- rabbitmq 配置 -->
+    <rabbit:connection-factory id="connectionFactory" virtual-host="#{rabbitConfigProp['rabbit.vhosts']}"
+                               addresses="#{rabbitConfigProp['rabbit.addresses']}"
+                               username="#{rabbitConfigProp['rabbit.username']}"
+                               password="#{rabbitConfigProp['rabbit.password']}"/>
+
+    <rabbit:admin connection-factory="connectionFactory"/>
+
+    <rabbit:queue id="mq_task_queue" name="mq_task_queue"
+                  durable="true" auto-delete="false" exclusive="false"/>
+
+    <rabbit:queue id="db_task_queue" name="db_task_queue"
+                  durable="true" auto-delete="false" exclusive="false"/>
+
+
+    <rabbit:topic-exchange name="robot_task_exchange"
+                           durable="true" auto-delete="false">
+        <rabbit:bindings>
+            <rabbit:binding queue="mq_task_queue" pattern="mq_task_queue"/>
+            <rabbit:binding queue="db_task_queue" pattern="db_task_queue"/>
+        </rabbit:bindings>
+    </rabbit:topic-exchange>
+
+    <bean id="jsonMessageConverter"
+          class="org.springframework.amqp.support.converter.Jackson2JsonMessageConverter"/>
+
+    <!-- spring template声明 -->
+    <rabbit:template exchange="robot_task_exchange" id="taskTemplate"
+                     connection-factory="connectionFactory" message-converter="jsonMessageConverter"/>
+
+    <!-- 配置监听queue -->
+    <bean id="mqTaskListener" class="com.wkb.robot.rabbitmq.listener.MQTaskListener">
+        <property name="messageConverter" ref="jsonMessageConverter"></property>
+    </bean>
+    <bean id="dbTaskListener" class="com.wkb.robot.rabbitmq.listener.DBTaskListener">
+        <property name="messageConverter" ref="jsonMessageConverter"></property>
+    </bean>
+
+
+    <rabbit:listener-container
+            connection-factory="connectionFactory" acknowledge="auto">
+        <rabbit:listener queues="mq_task_queue" ref="mqTaskListener"/>
+        <rabbit:listener queues="db_task_queue" ref="dbTaskListener"/>
+    </rabbit:listener-container>
+
+
+    <bean id="redisSentinelConfiguration" class="org.springframework.data.redis.connection.RedisSentinelConfiguration">
+        <property name="master">
+            <bean class="org.springframework.data.redis.connection.RedisNode">
+                <property name="name" value="#{redisConfigProp['redis.sentinel.master']}"></property>
+            </bean>
+        </property>
+        <property name="sentinels">
+            <set>
+                <bean class="org.springframework.data.redis.connection.RedisNode">
+                    <constructor-arg name="host" value="#{redisConfigProp['redis.sentinel1.host']}"></constructor-arg>
+                    <constructor-arg name="port" value="#{redisConfigProp['redis.sentinel1.port']}"></constructor-arg>
+                </bean>
+                <bean class="org.springframework.data.redis.connection.RedisNode">
+                    <constructor-arg name="host" value="#{redisConfigProp['redis.sentinel2.host']}"></constructor-arg>
+                    <constructor-arg name="port" value="#{redisConfigProp['redis.sentinel2.port']}"></constructor-arg>
+                </bean>
+                <bean class="org.springframework.data.redis.connection.RedisNode">
+                    <constructor-arg name="host" value="#{redisConfigProp['redis.sentinel3.host']}"></constructor-arg>
+                    <constructor-arg name="port" value="#{redisConfigProp['redis.sentinel3.port']}"></constructor-arg>
+                </bean>
+            </set>
+        </property>
+    </bean>
+    <bean id="redisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="database" value="#{redisConfigProp['redis.sentinel.database']}"/>
+        <property name="password" value="#{redisConfigProp['redis.sentinel.password']}"/>
+        <constructor-arg ref="redisSentinelConfiguration"/>
+        <constructor-arg ref="poolConfig"/>
+    </bean>
+    <!-- redis 相关配置 -->
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxTotal" value="#{redisConfigProp['redis.maxTotal']}"/>
+        <property name="maxIdle" value="#{redisConfigProp['redis.maxIdle']}"/>
+        <property name="maxWaitMillis" value="#{redisConfigProp['redis.maxWait']}"/>
+        <property name="testOnBorrow" value="#{redisConfigProp['redis.testOnBorrow']}"/>
+    </bean>
+
+    <!--&lt;!&ndash; 缓存 &ndash;&gt;-->
+    <!--<cache:annotation-driven cache-manager="cacheManager"/>-->
+
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="redisConnectionFactory"/>
+        <property name="keySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+        </property>
+        <property name="valueSerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
+        </property>
+        <property name="hashKeySerializer">
+            <bean class="org.springframework.data.redis.serializer.StringRedisSerializer"/>
+        </property>
+        <property name="hashValueSerializer">
+            <bean class="org.springframework.data.redis.serializer.JdkSerializationRedisSerializer"/>
+        </property>
+    </bean>
+
+    <bean id="defaultRedisOperate" class="com.wkb.core.redis.DefaultRedisOperate"/>
+
+    <!-- 缓存配置 -->
+    <!-- redis cacheManager -->
+    <bean id="redisCacheManager" class="org.springframework.data.redis.cache.RedisCacheManager"
+          c:redisOperations-ref="redisTemplate"/>
+
+    <!--&lt;!&ndash; default cacheManager &ndash;&gt;-->
+    <!--<bean id="defaultCacheManager" class="org.springframework.cache.support.SimpleCacheManager">-->
+        <!--<property name="caches">-->
+            <!--<set>-->
+                <!--<bean class="com.wkb.cache.SpringSimpleCacheImpl">-->
+                    <!--<property name="name" value="cache10"/>-->
+                    <!--<property name="expire" value="10"/>-->
+                    <!--<property name="cacheService" ref="defaultRedisOperate"/>-->
+                <!--</bean>-->
+                <!--<bean class="com.wkb.cache.SpringSimpleCacheImpl">-->
+                    <!--<property name="name" value="cache30"/>-->
+                    <!--<property name="expire" value="30"/>-->
+                    <!--<property name="cacheService" ref="defaultRedisOperate"/>-->
+                <!--</bean>-->
+                <!--<bean class="com.wkb.cache.SpringSimpleCacheImpl">-->
+                    <!--<property name="name" value="cache60"/>-->
+                    <!--<property name="expire" value="60"/>-->
+                    <!--<property name="cacheService" ref="defaultRedisOperate"/>-->
+                <!--</bean>-->
+                <!--<bean class="com.wkb.cache.SpringSimpleCacheImpl">-->
+                    <!--<property name="name" value="cache600"/>-->
+                    <!--<property name="expire" value="600"/>-->
+                    <!--<property name="cacheService" ref="defaultRedisOperate"/>-->
+                <!--</bean>-->
+                <!--<bean class="com.wkb.cache.SpringSimpleCacheImpl">-->
+                    <!--<property name="name" value="cache1800"/>-->
+                    <!--<property name="expire" value="1800"/>-->
+                    <!--<property name="cacheService" ref="defaultRedisOperate"/>-->
+                <!--</bean>-->
+            <!--</set>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <bean id="cacheManager" class="org.springframework.cache.support.CompositeCacheManager">
+        <property name="cacheManagers">
+            <list>
+                <!--<ref bean="defaultCacheManager"/>-->
+                <ref bean="redisCacheManager"/>
+            </list>
+        </property>
+    </bean>
+
+
+    <!-- 提供方应用名称信息，这个相当于起一个名字，我们dubbo管理页面比较清晰是哪个应用暴露出来的 -->
+    <dubbo:application name="robot-service"></dubbo:application>
+    <!-- 使用zookeeper注册中心暴露服务地址 -->
+    <dubbo:registry protocol="zookeeper"
+                    address="#{dubboConfigProp['dubbo.zookeeper.address']}"
+                    file="${registry.centre.path}"></dubbo:registry>
+    <dubbo:protocol server="netty" port="-1" serialization="hessian2"/>
+
+</beans>

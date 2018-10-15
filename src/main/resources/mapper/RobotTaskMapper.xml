@@ -1,0 +1,546 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.wkb.robot.mapper.RobotTaskMapper" >
+  <resultMap id="BaseResultMap" type="com.wkb.robot.bean.RobotTask" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="task_no" property="taskNo" jdbcType="VARCHAR" />
+    <result column="com_id" property="comId" jdbcType="VARCHAR" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="org_id" property="orgId" jdbcType="VARCHAR" />
+    <result column="queue_level" property="queueLevel" jdbcType="INTEGER" />
+    <result column="task_type" property="taskType" jdbcType="VARCHAR" />
+    <result column="task_process" property="taskProcess" jdbcType="VARCHAR" />
+    <result column="task_status" property="taskStatus" jdbcType="INTEGER" />
+    <result column="task_source" property="taskSource" jdbcType="VARCHAR" />
+    <result column="task_receiver" property="taskReceiver" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="comsuming_time" property="comsumingTime" jdbcType="BIGINT" />
+    <result column="task_info" property="taskInfo" jdbcType="VARCHAR" />
+    <result column="result_info" property="resultInfo" jdbcType="VARCHAR" />
+    <result column="plat_info" property="platInfo" jdbcType="VARCHAR" />
+    <result column="error_info" property="errorInfo" jdbcType="VARCHAR" />
+    <result column="license_no" property="licenseNo" jdbcType="VARCHAR" />
+    <result column="engine_no" property="engineNo" jdbcType="VARCHAR" />
+    <result column="frame_no" property="frameNo" jdbcType="VARCHAR" />
+    <result column="vehicle_name" property="vehicleName" jdbcType="VARCHAR" />
+    <result column="biz_policy_no" property="bizPolicyNo" jdbcType="VARCHAR" />
+    <result column="efc_policy_no" property="efcPolicyNo" jdbcType="VARCHAR" />
+    <result column="biz_insure_underwriting" property="bizInsureUnderwriting" jdbcType="VARCHAR" />
+    <result column="efc_insure_underwriting" property="efcInsureUnderwriting" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, task_no, com_id, user_name, org_id, queue_level, task_type, task_process, task_status, 
+    task_source, task_receiver, create_time, update_time, comsuming_time, task_info, 
+    result_info, plat_info, error_info, license_no, engine_no, frame_no, vehicle_name, 
+    biz_policy_no, efc_policy_no, biz_insure_underwriting, efc_insure_underwriting
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.wkb.robot.example.RobotTaskExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from robot_task
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+    <if test="limitClause != null" >
+      limit ${limitClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from robot_task
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from robot_task
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.wkb.robot.example.RobotTaskExample" >
+    delete from robot_task
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.wkb.robot.bean.RobotTask" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into robot_task (task_no, com_id, user_name, 
+      org_id, queue_level, task_type, 
+      task_process, task_status, task_source, 
+      task_receiver, create_time, update_time, 
+      comsuming_time, task_info, result_info, 
+      plat_info, error_info, license_no, 
+      engine_no, frame_no, vehicle_name, 
+      biz_policy_no, efc_policy_no, biz_insure_underwriting, 
+      efc_insure_underwriting)
+    values (#{taskNo,jdbcType=VARCHAR}, #{comId,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, 
+      #{orgId,jdbcType=VARCHAR}, #{queueLevel,jdbcType=INTEGER}, #{taskType,jdbcType=VARCHAR}, 
+      #{taskProcess,jdbcType=VARCHAR}, #{taskStatus,jdbcType=INTEGER}, #{taskSource,jdbcType=VARCHAR}, 
+      #{taskReceiver,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{comsumingTime,jdbcType=BIGINT}, #{taskInfo,jdbcType=VARCHAR}, #{resultInfo,jdbcType=VARCHAR}, 
+      #{platInfo,jdbcType=VARCHAR}, #{errorInfo,jdbcType=VARCHAR}, #{licenseNo,jdbcType=VARCHAR}, 
+      #{engineNo,jdbcType=VARCHAR}, #{frameNo,jdbcType=VARCHAR}, #{vehicleName,jdbcType=VARCHAR}, 
+      #{bizPolicyNo,jdbcType=VARCHAR}, #{efcPolicyNo,jdbcType=VARCHAR}, #{bizInsureUnderwriting,jdbcType=VARCHAR}, 
+      #{efcInsureUnderwriting,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wkb.robot.bean.RobotTask" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into robot_task
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="taskNo != null" >
+        task_no,
+      </if>
+      <if test="comId != null" >
+        com_id,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="orgId != null" >
+        org_id,
+      </if>
+      <if test="queueLevel != null" >
+        queue_level,
+      </if>
+      <if test="taskType != null" >
+        task_type,
+      </if>
+      <if test="taskProcess != null" >
+        task_process,
+      </if>
+      <if test="taskStatus != null" >
+        task_status,
+      </if>
+      <if test="taskSource != null" >
+        task_source,
+      </if>
+      <if test="taskReceiver != null" >
+        task_receiver,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+      <if test="comsumingTime != null" >
+        comsuming_time,
+      </if>
+      <if test="taskInfo != null" >
+        task_info,
+      </if>
+      <if test="resultInfo != null" >
+        result_info,
+      </if>
+      <if test="platInfo != null" >
+        plat_info,
+      </if>
+      <if test="errorInfo != null" >
+        error_info,
+      </if>
+      <if test="licenseNo != null" >
+        license_no,
+      </if>
+      <if test="engineNo != null" >
+        engine_no,
+      </if>
+      <if test="frameNo != null" >
+        frame_no,
+      </if>
+      <if test="vehicleName != null" >
+        vehicle_name,
+      </if>
+      <if test="bizPolicyNo != null" >
+        biz_policy_no,
+      </if>
+      <if test="efcPolicyNo != null" >
+        efc_policy_no,
+      </if>
+      <if test="bizInsureUnderwriting != null" >
+        biz_insure_underwriting,
+      </if>
+      <if test="efcInsureUnderwriting != null" >
+        efc_insure_underwriting,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="taskNo != null" >
+        #{taskNo,jdbcType=VARCHAR},
+      </if>
+      <if test="comId != null" >
+        #{comId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null" >
+        #{orgId,jdbcType=VARCHAR},
+      </if>
+      <if test="queueLevel != null" >
+        #{queueLevel,jdbcType=INTEGER},
+      </if>
+      <if test="taskType != null" >
+        #{taskType,jdbcType=VARCHAR},
+      </if>
+      <if test="taskProcess != null" >
+        #{taskProcess,jdbcType=VARCHAR},
+      </if>
+      <if test="taskStatus != null" >
+        #{taskStatus,jdbcType=INTEGER},
+      </if>
+      <if test="taskSource != null" >
+        #{taskSource,jdbcType=VARCHAR},
+      </if>
+      <if test="taskReceiver != null" >
+        #{taskReceiver,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="comsumingTime != null" >
+        #{comsumingTime,jdbcType=BIGINT},
+      </if>
+      <if test="taskInfo != null" >
+        #{taskInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="resultInfo != null" >
+        #{resultInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="platInfo != null" >
+        #{platInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="errorInfo != null" >
+        #{errorInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="licenseNo != null" >
+        #{licenseNo,jdbcType=VARCHAR},
+      </if>
+      <if test="engineNo != null" >
+        #{engineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="frameNo != null" >
+        #{frameNo,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleName != null" >
+        #{vehicleName,jdbcType=VARCHAR},
+      </if>
+      <if test="bizPolicyNo != null" >
+        #{bizPolicyNo,jdbcType=VARCHAR},
+      </if>
+      <if test="efcPolicyNo != null" >
+        #{efcPolicyNo,jdbcType=VARCHAR},
+      </if>
+      <if test="bizInsureUnderwriting != null" >
+        #{bizInsureUnderwriting,jdbcType=VARCHAR},
+      </if>
+      <if test="efcInsureUnderwriting != null" >
+        #{efcInsureUnderwriting,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.wkb.robot.example.RobotTaskExample" resultType="java.lang.Integer" >
+    select count(*) from robot_task
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update robot_task
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.taskNo != null" >
+        task_no = #{record.taskNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.comId != null" >
+        com_id = #{record.comId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.userName != null" >
+        user_name = #{record.userName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orgId != null" >
+        org_id = #{record.orgId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.queueLevel != null" >
+        queue_level = #{record.queueLevel,jdbcType=INTEGER},
+      </if>
+      <if test="record.taskType != null" >
+        task_type = #{record.taskType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.taskProcess != null" >
+        task_process = #{record.taskProcess,jdbcType=VARCHAR},
+      </if>
+      <if test="record.taskStatus != null" >
+        task_status = #{record.taskStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.taskSource != null" >
+        task_source = #{record.taskSource,jdbcType=VARCHAR},
+      </if>
+      <if test="record.taskReceiver != null" >
+        task_receiver = #{record.taskReceiver,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createTime != null" >
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null" >
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.comsumingTime != null" >
+        comsuming_time = #{record.comsumingTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.taskInfo != null" >
+        task_info = #{record.taskInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.resultInfo != null" >
+        result_info = #{record.resultInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.platInfo != null" >
+        plat_info = #{record.platInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.errorInfo != null" >
+        error_info = #{record.errorInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.licenseNo != null" >
+        license_no = #{record.licenseNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.engineNo != null" >
+        engine_no = #{record.engineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.frameNo != null" >
+        frame_no = #{record.frameNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.vehicleName != null" >
+        vehicle_name = #{record.vehicleName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.bizPolicyNo != null" >
+        biz_policy_no = #{record.bizPolicyNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.efcPolicyNo != null" >
+        efc_policy_no = #{record.efcPolicyNo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.bizInsureUnderwriting != null" >
+        biz_insure_underwriting = #{record.bizInsureUnderwriting,jdbcType=VARCHAR},
+      </if>
+      <if test="record.efcInsureUnderwriting != null" >
+        efc_insure_underwriting = #{record.efcInsureUnderwriting,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update robot_task
+    set id = #{record.id,jdbcType=INTEGER},
+      task_no = #{record.taskNo,jdbcType=VARCHAR},
+      com_id = #{record.comId,jdbcType=VARCHAR},
+      user_name = #{record.userName,jdbcType=VARCHAR},
+      org_id = #{record.orgId,jdbcType=VARCHAR},
+      queue_level = #{record.queueLevel,jdbcType=INTEGER},
+      task_type = #{record.taskType,jdbcType=VARCHAR},
+      task_process = #{record.taskProcess,jdbcType=VARCHAR},
+      task_status = #{record.taskStatus,jdbcType=INTEGER},
+      task_source = #{record.taskSource,jdbcType=VARCHAR},
+      task_receiver = #{record.taskReceiver,jdbcType=VARCHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      comsuming_time = #{record.comsumingTime,jdbcType=BIGINT},
+      task_info = #{record.taskInfo,jdbcType=VARCHAR},
+      result_info = #{record.resultInfo,jdbcType=VARCHAR},
+      plat_info = #{record.platInfo,jdbcType=VARCHAR},
+      error_info = #{record.errorInfo,jdbcType=VARCHAR},
+      license_no = #{record.licenseNo,jdbcType=VARCHAR},
+      engine_no = #{record.engineNo,jdbcType=VARCHAR},
+      frame_no = #{record.frameNo,jdbcType=VARCHAR},
+      vehicle_name = #{record.vehicleName,jdbcType=VARCHAR},
+      biz_policy_no = #{record.bizPolicyNo,jdbcType=VARCHAR},
+      efc_policy_no = #{record.efcPolicyNo,jdbcType=VARCHAR},
+      biz_insure_underwriting = #{record.bizInsureUnderwriting,jdbcType=VARCHAR},
+      efc_insure_underwriting = #{record.efcInsureUnderwriting,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wkb.robot.bean.RobotTask" >
+    update robot_task
+    <set >
+      <if test="taskNo != null" >
+        task_no = #{taskNo,jdbcType=VARCHAR},
+      </if>
+      <if test="comId != null" >
+        com_id = #{comId,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null" >
+        org_id = #{orgId,jdbcType=VARCHAR},
+      </if>
+      <if test="queueLevel != null" >
+        queue_level = #{queueLevel,jdbcType=INTEGER},
+      </if>
+      <if test="taskType != null" >
+        task_type = #{taskType,jdbcType=VARCHAR},
+      </if>
+      <if test="taskProcess != null" >
+        task_process = #{taskProcess,jdbcType=VARCHAR},
+      </if>
+      <if test="taskStatus != null" >
+        task_status = #{taskStatus,jdbcType=INTEGER},
+      </if>
+      <if test="taskSource != null" >
+        task_source = #{taskSource,jdbcType=VARCHAR},
+      </if>
+      <if test="taskReceiver != null" >
+        task_receiver = #{taskReceiver,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="comsumingTime != null" >
+        comsuming_time = #{comsumingTime,jdbcType=BIGINT},
+      </if>
+      <if test="taskInfo != null" >
+        task_info = #{taskInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="resultInfo != null" >
+        result_info = #{resultInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="platInfo != null" >
+        plat_info = #{platInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="errorInfo != null" >
+        error_info = #{errorInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="licenseNo != null" >
+        license_no = #{licenseNo,jdbcType=VARCHAR},
+      </if>
+      <if test="engineNo != null" >
+        engine_no = #{engineNo,jdbcType=VARCHAR},
+      </if>
+      <if test="frameNo != null" >
+        frame_no = #{frameNo,jdbcType=VARCHAR},
+      </if>
+      <if test="vehicleName != null" >
+        vehicle_name = #{vehicleName,jdbcType=VARCHAR},
+      </if>
+      <if test="bizPolicyNo != null" >
+        biz_policy_no = #{bizPolicyNo,jdbcType=VARCHAR},
+      </if>
+      <if test="efcPolicyNo != null" >
+        efc_policy_no = #{efcPolicyNo,jdbcType=VARCHAR},
+      </if>
+      <if test="bizInsureUnderwriting != null" >
+        biz_insure_underwriting = #{bizInsureUnderwriting,jdbcType=VARCHAR},
+      </if>
+      <if test="efcInsureUnderwriting != null" >
+        efc_insure_underwriting = #{efcInsureUnderwriting,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wkb.robot.bean.RobotTask" >
+    update robot_task
+    set task_no = #{taskNo,jdbcType=VARCHAR},
+      com_id = #{comId,jdbcType=VARCHAR},
+      user_name = #{userName,jdbcType=VARCHAR},
+      org_id = #{orgId,jdbcType=VARCHAR},
+      queue_level = #{queueLevel,jdbcType=INTEGER},
+      task_type = #{taskType,jdbcType=VARCHAR},
+      task_process = #{taskProcess,jdbcType=VARCHAR},
+      task_status = #{taskStatus,jdbcType=INTEGER},
+      task_source = #{taskSource,jdbcType=VARCHAR},
+      task_receiver = #{taskReceiver,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      comsuming_time = #{comsumingTime,jdbcType=BIGINT},
+      task_info = #{taskInfo,jdbcType=VARCHAR},
+      result_info = #{resultInfo,jdbcType=VARCHAR},
+      plat_info = #{platInfo,jdbcType=VARCHAR},
+      error_info = #{errorInfo,jdbcType=VARCHAR},
+      license_no = #{licenseNo,jdbcType=VARCHAR},
+      engine_no = #{engineNo,jdbcType=VARCHAR},
+      frame_no = #{frameNo,jdbcType=VARCHAR},
+      vehicle_name = #{vehicleName,jdbcType=VARCHAR},
+      biz_policy_no = #{bizPolicyNo,jdbcType=VARCHAR},
+      efc_policy_no = #{efcPolicyNo,jdbcType=VARCHAR},
+      biz_insure_underwriting = #{bizInsureUnderwriting,jdbcType=VARCHAR},
+      efc_insure_underwriting = #{efcInsureUnderwriting,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.wkb.robot</groupId>
+  <artifactId>task-service</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>war</packaging>
+
+  <name>robotService服务</name>
+
+  <parent>
+    <groupId>com.wkb</groupId>
+    <artifactId>wkb-parent</artifactId>
+    <version>1.0.6-RELEASE</version>
+  </parent>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <basedata-service-sdk.version>1.5.6-${deploy.version}</basedata-service-sdk.version>
+    <wkb-common-sdk.version>1.0.2.070511-${deploy.version}</wkb-common-sdk.version>
+  </properties>
+
+  <dependencies>
+    <!-- wkb start -->
+    <dependency>
+      <groupId>com.wkb</groupId>
+      <artifactId>basedata-service-sdk</artifactId>
+      <version>${basedata-service-sdk.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.wkb</groupId>
+      <artifactId>wkb-common-sdk</artifactId>
+      <version>${wkb-common-sdk.version}</version>
+    </dependency>
+    <!-- wkb end -->
+
+
+    <!-- spring start -->
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-test</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
+    </dependency>
+    <!-- spring end -->
+
+
+    <!-- mybatis start -->
+    <dependency>
+      <groupId>org.mybatis</groupId>
+      <artifactId>mybatis</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.mybatis</groupId>
+      <artifactId>mybatis-spring</artifactId>
+    </dependency>
+    <!-- mybatis end -->
+    <!-- mysql start -->
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+    </dependency>
+    <!-- mysql end -->
+
+    <!-- durid start -->
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>druid</artifactId>
+    </dependency>
+    <!-- durid end -->
+    <!-- config-toolkit start -->
+    <dependency>
+      <groupId>com.dangdang</groupId>
+      <artifactId>config-toolkit</artifactId>
+    </dependency>
+    <!-- config-toolkit end -->
+
+
+    <!-- dubbo start -->
+    <dependency>
+      <groupId>com.alibaba</groupId>
+      <artifactId>dubbo</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.zookeeper</groupId>
+      <artifactId>zookeeper</artifactId>
+    </dependency>
+    <!-- dubbo end -->
+
+
+
+    <!-- rabbitmq start -->
+    <dependency>
+      <groupId>com.rabbitmq</groupId>
+      <artifactId>amqp-client</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.amqp</groupId>
+      <artifactId>spring-rabbit</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.amqp</groupId>
+      <artifactId>spring-amqp</artifactId>
+      <version>1.5.7.RELEASE</version>
+    </dependency>
+    <!-- rabbitmq end -->
+
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+    </dependency>
+
+    <!-- jstl start -->
+    <dependency>
+      <groupId>jstl</groupId>
+      <artifactId>jstl</artifactId>
+      <version>1.2</version>
+    </dependency>
+    <!-- jstl end -->
+
+
+  </dependencies>
+
+  <build>
+    <finalName>robot-service</finalName>
+    <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>3.1.0</version>
+          <configuration>
+            <appendAssemblyId>false</appendAssemblyId>
+            <descriptors>
+              <descriptor>/assembly/assembly.xml</descriptor>
+            </descriptors>
+          </configuration>
+          <executions>
+            <execution>
+              <phase>package</phase>
+              <goals>
+                <goal>single</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <repositories>
+    <repository>
+      <id>wkb</id>
+      <name>wkb maven</name>
+      <url>http://nexus.wkbins.com/nexus/content/groups/public/</url>
+    </repository>
+  </repositories>
+</project>
